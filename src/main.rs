@@ -1,6 +1,9 @@
 extern crate chrono;
+#[macro_use]
+extern crate log;
 extern crate postgres;
 extern crate rumqtt;
+extern crate simple_logger;
 #[macro_use]
 extern crate structopt;
 
@@ -74,9 +77,12 @@ fn subscribe_topics(conn: &Connection, mqtt: &mut MqttClient) {
     }
 
     mqtt.subscribe(topicv).expect("MQTT Subscription failure");
+    debug!("subscribed to topics {:?}", topics_raw);
 }
 
 fn main() {
+    simple_logger::init().unwrap();
+    info!("mqtt_brewski begins. Prepare the cider!");
     let opt = Opt::from_args();
     let conn = db::get_connection(opt.dbhost, opt.dbname, opt.dbuser, opt.dbpass);
 
@@ -84,7 +90,7 @@ fn main() {
     let mut request = init_mqtt(opt.client_id, opt.broker, &msg_tx);
     subscribe_topics(&conn, &mut request);
 
-    println!("Hello, world!");
+    info!("initialization complete.");
     loop {
         let msg = msg_rx.recv().unwrap();
         msg.log_to_database(&conn);
