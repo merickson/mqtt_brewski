@@ -1,0 +1,10 @@
+[package]
+name = "mqtt_brewski"
+version = "0.1.0"
+authors = ["Matt Erickson"]
+
+[dependencies]
+rumqtt = "0.10"
+chrono = "0.4"
+structopt = "0.2.10"
+postgres = "0.15"
